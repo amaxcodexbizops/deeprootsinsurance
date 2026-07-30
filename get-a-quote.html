@@ -36,13 +36,15 @@
     --white:#FFFFFF;
     --shadow: 0 20px 50px -20px rgba(27,59,92,0.35);
     --radius: 18px;
+    --promo-h: 44px;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
-  html{scroll-behavior:smooth; scroll-padding-top:90px;}
+  html{scroll-behavior:smooth; scroll-padding-top:calc(90px + var(--promo-h));}
   body{
     font-family:'Inter', sans-serif;
     color:var(--ink);
     background:var(--cream);
+    padding-top:var(--promo-h);
     line-height:1.6;
     -webkit-font-smoothing:antialiased;
     overflow-x:hidden;
@@ -130,12 +132,63 @@
   /* ===== NAV ===== */
   header{
     position:fixed;
-    top:0; left:0; right:0;
+    top:var(--promo-h); left:0; right:0;
     z-index:100;
     background:rgba(245,249,252,0.92);
     backdrop-filter:blur(10px);
     border-bottom:1px solid rgba(27,59,92,0.1);
   }
+
+  /* ===== PREVIEW BANNER ===== */
+  .promo-banner{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:110;
+    background:#14181f;
+    color:#fff;
+    font-size:0.85rem;
+  }
+  .promo-banner-inner{
+    max-width:1180px;
+    margin:0 auto;
+    padding:10px 48px 10px 24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    flex-wrap:wrap;
+    text-align:center;
+  }
+  .promo-banner strong{color:#fff;}
+  .promo-cta{
+    display:inline-block;
+    background:var(--orange);
+    color:#fff;
+    font-weight:700;
+    font-size:0.78rem;
+    letter-spacing:0.02em;
+    padding:6px 16px;
+    border-radius:999px;
+    white-space:nowrap;
+    flex-shrink:0;
+    transition:background .15s ease;
+  }
+  .promo-cta:hover{background:var(--orange-dark);}
+  .promo-close{
+    position:absolute;
+    right:8px; top:50%;
+    transform:translateY(-50%);
+    color:rgba(255,255,255,0.65);
+    font-size:1.3rem;
+    line-height:1;
+    padding:6px 10px;
+    cursor:pointer;
+  }
+  .promo-close:hover{color:#fff;}
+  @media (max-width:560px){
+    .promo-banner-inner{padding:10px 40px 10px 16px; font-size:0.78rem;}
+  }
+
   nav{
     display:flex;
     align-items:center;
@@ -567,6 +620,20 @@
 </head>
 <body>
 
+<!-- ===== PREVIEW BANNER (agency wrapper — remove before final client handoff) ===== -->
+<div class="promo-banner" id="promoBanner">
+  <div class="promo-banner-inner">
+    <span>👋 This is a free website preview built for <strong>Deep Roots Insurance Solutions</strong> — not live yet.</span>
+    <a href="https://sites.codexbizops.com/get-started" target="_blank" rel="noopener" class="promo-cta">Claim This Site</a>
+  </div>
+  <button type="button" class="promo-close" id="promoClose" aria-label="Dismiss preview banner">&times;</button>
+</div>
+<script>
+  (function(){
+    var b = document.getElementById('promoBanner');
+    if (b) document.documentElement.style.setProperty('--promo-h', b.offsetHeight + 'px');
+  })();
+</script>
 
 <!-- Icon sprite (self-contained, no external CDN) -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -802,6 +869,25 @@
   var toggle = document.getElementById('navToggle');
   var links = document.getElementById('navLinks');
   var headerEl = document.querySelector('header');
+  var promoBanner = document.getElementById('promoBanner');
+  var promoClose = document.getElementById('promoClose');
+
+  function updatePromoHeight(){
+    if (promoBanner && promoBanner.style.display !== 'none') {
+      document.documentElement.style.setProperty('--promo-h', promoBanner.offsetHeight + 'px');
+    } else {
+      document.documentElement.style.setProperty('--promo-h', '0px');
+    }
+  }
+  updatePromoHeight();
+  window.addEventListener('resize', updatePromoHeight);
+
+  if (promoClose && promoBanner) {
+    promoClose.addEventListener('click', function(){
+      promoBanner.style.display = 'none';
+      updatePromoHeight();
+    });
+  }
 
   if (toggle && links) {
     toggle.addEventListener('click', function(){
@@ -812,8 +898,9 @@
   function scrollToId(id){
     var target = document.getElementById(id);
     if (!target) return false;
-    var headerHeight = headerEl ? headerEl.offsetHeight : 0;
-    var top = target.getBoundingClientRect().top + window.pageYOffset - headerHeight - 12;
+    // Use the fixed header's actual bottom edge (accounts for the promo banner above it too).
+    var offset = headerEl ? headerEl.getBoundingClientRect().bottom : 0;
+    var top = target.getBoundingClientRect().top + window.pageYOffset - offset - 12;
     window.scrollTo({top: Math.max(top, 0), behavior: 'smooth'});
     return true;
   }

@@ -45,9 +45,42 @@
   footer{background:var(--navy-dark); color:rgba(245,249,252,0.75); padding:32px 0; text-align:center; font-size:0.85rem;}
   footer a{color:rgba(245,249,252,0.85); text-decoration:none;}
   footer a:hover{color:var(--orange);}
+
+  /* ===== PREVIEW BANNER ===== */
+  .promo-banner{background:#14181f; color:#fff; font-size:0.85rem; position:relative;}
+  .promo-banner-inner{
+    max-width:1180px; margin:0 auto; padding:10px 48px 10px 24px;
+    display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; text-align:center;
+  }
+  .promo-banner strong{color:#fff;}
+  .promo-cta{
+    display:inline-block; background:var(--orange); color:#fff; font-weight:700; font-size:0.78rem;
+    letter-spacing:0.02em; padding:6px 16px; border-radius:999px; white-space:nowrap; flex-shrink:0;
+  }
+  .promo-cta:hover{background:var(--orange-dark);}
+  .promo-close{
+    position:absolute; right:8px; top:50%; transform:translateY(-50%);
+    color:rgba(255,255,255,0.65); font-size:1.3rem; line-height:1; padding:6px 10px; cursor:pointer;
+    background:none; border:none;
+  }
+  .promo-close:hover{color:#fff;}
+  @media (max-width:560px){ .promo-banner-inner{padding:10px 40px 10px 16px; font-size:0.78rem;} }
 </style>
 </head>
 <body>
+
+<div class="promo-banner" id="promoBanner">
+  <div class="promo-banner-inner">
+    <span>👋 This is a free website preview built for <strong>Deep Roots Insurance Solutions</strong> — not live yet.</span>
+    <a href="https://sites.codexbizops.com/get-started" target="_blank" rel="noopener" class="promo-cta">Claim This Site</a>
+  </div>
+  <button type="button" class="promo-close" id="promoClose" aria-label="Dismiss preview banner">&times;</button>
+</div>
+<script>
+  var pb = document.getElementById('promoBanner');
+  var pc = document.getElementById('promoClose');
+  if (pc && pb) pc.addEventListener('click', function(){ pb.style.display = 'none'; });
+</script>
 
 <header>
   <nav>
